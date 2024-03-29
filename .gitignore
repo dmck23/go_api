@@ -1,0 +1,3 @@
+docker/postgres_data/
+docker/mongo_data/
+.vscode
