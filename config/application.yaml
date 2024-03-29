@@ -1,0 +1,10 @@
+server:
+  port: 2307
+
+database:
+  postgres:
+    user: postgres
+    db_name: world
+    password: postgres
+    host: localhost
+  

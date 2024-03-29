@@ -1,0 +1,31 @@
+version: '3.1'
+services:
+  docker-postgres:
+    image: aa8y/postgres-dataset:world
+    container_name: docker-pg-world
+    volumes:
+      - ./postgres_data:/var/lib/postgresql/data
+    environment:
+      - POSTGRES_USER=postgres
+      - POSTGRES_DB=donotuse
+      - POSTGRES_PASSWORD=postgres
+    ports:
+      - 5432:5432
+    networks:
+      - default
+    restart: always
+
+  docker-mongodb:
+    image: mongo:latest
+    container_name: docker-mongodb
+    volumes:
+      - ./mongo_data:/data/db
+    ports:
+      - 27017:27017
+    networks:
+      - default
+    restart: always
+
+networks:
+  docker_default:
+        
