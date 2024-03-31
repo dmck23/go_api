@@ -7,17 +7,17 @@ import (
 )
 
 type UserHandler struct {
-	repo domain.UserDb
+	userService domain.UserSvc
 }
 
-func NewUserHandler(repo domain.UserDb) UserHandler {
+func NewUserHandler(userService domain.UserSvc) UserHandler {
 
-	return UserHandler{repo: repo}
+	return UserHandler{userService: userService}
 }
 
 func (uh UserHandler) RegisterUser(w http.ResponseWriter, r *http.Request) {
 
-	data := &domain.UserRequestModel{}
+	data := &domain.User{}
 
 	err := json.NewDecoder(r.Body).Decode(&data)
 
@@ -25,7 +25,7 @@ func (uh UserHandler) RegisterUser(w http.ResponseWriter, r *http.Request) {
 		panic(err)
 	}
 
-	success, _ := uh.repo.CreateUser(data)
+	success, _ := uh.userService.AddNewUser(data)
 
 	var status int
 

@@ -8,6 +8,7 @@ import (
 	user_handler "go_api/world/internal/user/handlers"
 	user_repositories "go_api/world/internal/user/repositories"
 	user_routes "go_api/world/internal/user/routes"
+	user_services "go_api/world/internal/user/services"
 	"net/http"
 
 	"github.com/go-chi/chi/v5"
@@ -38,9 +39,8 @@ func initCityHandler() *handlers.CityHandler {
 
 func initUserHandler() *user_handler.UserHandler {
 	ur := user_repositories.NewUserMongoRepository()
-
-	uh := user_handler.NewUserHandler(ur)
+	us := user_services.NewUserService(ur)
+	uh := user_handler.NewUserHandler(us)
 
 	return &uh
-
 }

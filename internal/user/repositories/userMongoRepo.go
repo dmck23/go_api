@@ -3,7 +3,6 @@ package repositories
 import (
 	"context"
 	"go_api/world/internal/user/domain"
-	"go_api/world/internal/user/errors"
 	"log"
 
 	"go.mongodb.org/mongo-driver/bson"
@@ -34,24 +33,33 @@ func NewUserMongoRepository() domain.UserDb {
 	return &UserMongoRepository{collection: userCollection, ctx: context.TODO()}
 }
 
-func (ur *UserMongoRepository) CreateUser(user *domain.UserRequestModel) (bool, error) {
+func (ur *UserMongoRepository) CreateUser(user []byte) (bool, error) {
 
-	// var db_user domain.UserDbModel
+	result, mongoErr := ur.collection.InsertOne(ur.ctx, user)
 
-	var userExistsResult bson.M
-
-	userErr := ur.collection.FindOne(ur.ctx, bson.D{{Key: "username", Value: user.Username}}).Decode(&userExistsResult)
-
-	emailErr := ur.collection.FindOne(ur.ctx, bson.D{{Key: "email", Value: user.Email}}).Decode(&userExistsResult)
-
-	if userErr == mongo.ErrNoDocuments && emailErr == mongo.ErrNoDocuments {
-		_, mongoErr := ur.collection.InsertOne(ur.ctx, user)
-
-		if mongoErr != nil {
-			log.Fatal(mongoErr)
-		}
-		return true, nil
+	if mongoErr != nil {
+		log.Fatal(mongoErr)
 	}
 
-	return false, errors.UserAlreadyExists{}
+	log.Println(result)
+
+	return true, nil
+}
+
+func (ur *UserMongoRepository) FindUserByUserName(username string) (*domain.User, error) {
+
+	var userResult domain.User
+
+	err := ur.collection.FindOne(ur.ctx, bson.D{{Key: "username", Value: username}}).Decode(&userResult)
+
+	return &userResult, err
+}
+
+func (ur *UserMongoRepository) FindUserByEmail(email string) (*domain.User, error) {
+
+	var userResult domain.User
+
+	err := ur.collection.FindOne(ur.ctx, bson.D{{Key: "email", Value: email}}).Decode(&userResult)
+
+	return &userResult, err
 }
